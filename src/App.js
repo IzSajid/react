@@ -6,10 +6,9 @@ function App() {
     <div className="App">
       {showEmployee ? (
         <>
-          <Employee />
-          <Employee />
-          <Employee />
-          <Employee />
+          <Employee name = "Sajid" role = "Intern"/>
+          <Employee name = "Caleb" role = "Senior Dev"/>
+          <Employee name = "Joker"/>
         </>
       ) : (
         <h3> You do not have acess</h3>
