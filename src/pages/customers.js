@@ -12,7 +12,8 @@ export default function Customers() {
             console.log(data);
             setCustomers(data.customers);
         });
-    }, []); // added empty dependency array
+    }, [url]); // added empty dependency array
+
     return (
         <>
             <h1>Customers:</h1>
@@ -22,5 +23,5 @@ export default function Customers() {
                 }): null}
         </>
     );
-
+    
 }
