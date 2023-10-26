@@ -4,7 +4,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { NavLink } from 'react-router-dom'
 
 const navigation = [
-    { name: 'Dashboard', href: '/other' },
+    { name: 'Dashboard', href: '/dashboard' },
     { name: 'Employees', href: '/employees' },
     { name: 'Customers', href: '/customers' },
     { name: 'Dictionary', href: '/dictionary' },

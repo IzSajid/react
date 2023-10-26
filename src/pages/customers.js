@@ -1,66 +1,89 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import AddCustomer from '../components/AddCustomer';
 import { baseUrl } from '../share';
-import AddCustomer from "../components/AddCustomer";
-
 
 export default function Customers() {
-    const url = baseUrl + "api/customers";
     const [customers, setCustomers] = useState();
+    const [show, setShow] = useState(false);
+
+    function toggleShow() {
+        setShow(!show);
+    }
+
+    const location = useLocation();
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const url = baseUrl + 'api/customers';
+        fetch(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('access'),
+            },
+        })
+            .then((response) => {
+                if (response.status === 401) {
+                    navigate('/login', {
+                        state: {
+                            previousUrl: location.pathname,
+                        },
+                    });
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setCustomers(data.customers);
+            });
+    }, []);
     function newCustomer(name, industry) {
         const data = { name: name, industry: industry };
+        const url = baseUrl + 'api/customers/';
         fetch(url, {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
         })
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Something went wrong');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                toggleShow();
                 console.log(data);
                 setCustomers([...customers, data.customer]);
+                //make sure the list is updated appropriately
             })
-            .catch(error => console.log(error));
-    }
-
-    useEffect(() => {
-        console.log("customers.js fetching...");
-        fetch(url)
-            .then((response) => {
-                if (response.status === 401)
-                    navigate('/login');
-                response.json()
-            }
-            )
-            .then((data) => {
-                console.log(data);
-                setCustomers(data.customers);
+            .catch((e) => {
+                console.log(e);
             });
-            
-    },[]); 
+    }
+    return (
+        <>
+            <h1>Here are our customers:</h1>
+            {customers
+                ? customers.map((customer) => {
+                      return (
+                          <div className="m-2" key={customer.id}>
+                              <Link to={'/customers/' + customer.id}>
+                                  <button className="no-underline bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                                      {customer.name}
+                                  </button>
+                              </Link>
+                          </div>
+                      );
+                  })
+                : null}
 
-       return (
-            <div>
-                <h1 className="text-center">Customers:</h1>
-                {customers
-                    ? customers.map((customer) => {
-                        return (
-                            <div className="text-center"
-                            key={customer.id}>
-                                <Link to={"/customers/" + customer.id}>
-                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-2 py-2 px-4 rounded w-50 h-16">
-                                        {customer.name}
-                                    </button>
-                                </Link>
-                            </div>
-                        );
-                    }) 
-                    : null}
-                <AddCustomer newCustomer={newCustomer} />
-            </div>
-        );                         
-                        
+            <AddCustomer
+                newCustomer={newCustomer}
+                show={show}
+                toggleShow={toggleShow}
+            />
+        </>
+    );
 }
