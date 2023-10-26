@@ -20,7 +20,7 @@ export default function Customer() {
         if (customer.industry !== tempCustomer.industry) equal = false;
 
         if (equal) setChanged(false);
-    });
+    },[]);
 
     useEffect(() => {
         const url = baseUrl + 'api/customers/' + id;
@@ -29,6 +29,9 @@ export default function Customer() {
                 if (response.status === 404) {
                     //render a 404 component in this page
                     setNotFound(true);
+                }
+                else if (response.status === 401) {
+                    navigate('/login');
                 }
                 if (!response.ok)
                     throw new Error('Something went wrong!');
