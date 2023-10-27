@@ -1,7 +1,9 @@
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
+import { useContext } from 'react'
+import { Disclosure} from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { NavLink } from 'react-router-dom'
+
+import { LoginContext } from '../App'
 
 const navigation = [
     { name: 'Dashboard', href: '/dashboard' },
@@ -15,6 +17,9 @@ function classNames(...classes) {
 }
 
 export default function Header(props) {
+
+    const [loggedIn,setLoggedIn] = useContext(LoginContext);
+
     return (
         <>
             <Disclosure as="nav" className="bg-gray-800">
@@ -57,18 +62,27 @@ export default function Header(props) {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                                    <button
-                                        type="button"
-                                        className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                                    >
-                                        <span className="absolute -inset-1.5" />
-                                        <span className="sr-only">View notifications</span>
-                                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                                    </button>
-
-
-                                </div>
+                                
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">  
+                                    {loggedIn ?    
+                                        <NavLink 
+                                            to={'#'}
+                                            onClick={()=>{
+                                                    setLoggedIn(false);
+                                                    localStorage.clear();
+                                            }}
+                                            >
+                                            <button type="button" 
+                                            className="bg-transparent hover:bg-gray-700 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-300 hover:border-white rounded">  Logout  </button>  
+                                        </NavLink> 
+                                    :
+                                        <NavLink 
+                                            to={'/login'}>
+                                            <button type="button" 
+                                            className="bg-transparent hover:bg-gray-700 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-300 hover:border-white rounded">  Login  </button>  
+                                        </NavLink>
+                                    }
+                                </div>   
                             </div>
                         </div>
 

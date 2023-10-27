@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate,useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useContext } from 'react';
 import { baseUrl } from '../share';
+import { LoginContext } from '../App';
 
 export default function Customer() {
     const { id } = useParams();
@@ -11,6 +12,7 @@ export default function Customer() {
     const [notFound, setNotFound] = useState();
     const [changed, setChanged] = useState(false);
     const [error, setError] = useState(false);
+    const [loggedIn, setLoggedIn] = useContext(LoginContext);
 
     useEffect(() => {
         if (!customer) return;
@@ -33,10 +35,11 @@ export default function Customer() {
         })
             .then((response) => {
                 if (response.status === 404) {
-                    //render a 404 component in this page
+                    
                     setNotFound(true);
                 }
                 else if (response.status === 401) {
+                    setLoggedIn(false);
                     navigate('/login',
                         {
                             state: {
@@ -72,13 +75,15 @@ export default function Customer() {
             body: JSON.stringify(tempCustomer),
         })
             .then((response) => {
-                if (response.status === 401)
+                if (response.status === 401){
+                    setLoggedIn(false);
                     navigate('/login',
                     {
                         state: {
                             previousUrl: location.pathname,
                         },
                     });
+                }
                 if (!response.ok) {
                     throw new Error('Something went wrong!');
                 }
@@ -167,12 +172,15 @@ export default function Customer() {
                             })
                                 .then((response) => {
                                     if (response.status === 401)
+                                        {
+                                        setLoggedIn(false);
                                         navigate('/login',
                                         {
                                             state: {
                                                 previousUrl: location.pathname,
                                             },
                                         });
+                                    }
                                     if (!response.ok) {
                                         throw new Error('Something went wrong');
                                     }

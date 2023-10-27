@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AddCustomer from '../components/AddCustomer';
 import { baseUrl } from '../share';
+import { LoginContext } from '../App';
 
 export default function Customers() {
+    const [loggedIn, setLoggedIn] = useContext(LoginContext);
     const [customers, setCustomers] = useState();
     const [show, setShow] = useState(false);
 
@@ -24,6 +26,7 @@ export default function Customers() {
         })
             .then((response) => {
                 if (response.status === 401) {
+                    setLoggedIn(false);
                     navigate('/login', {
                         state: {
                             previousUrl: location.pathname,
@@ -38,15 +41,24 @@ export default function Customers() {
     }, []);
     function newCustomer(name, industry) {
         const data = { name: name, industry: industry };
-        const url = baseUrl + 'api/customers/';
+        const url = baseUrl + 'api/customers';
         fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('access'),
             },
             body: JSON.stringify(data),
         })
             .then((response) => {
+                if (response.status === 401) {
+                    setLoggedIn(false);
+                    navigate('/login', {
+                        state: {
+                            previousUrl: location.pathname,
+                        },
+                    });
+                }
                 if (!response.ok) {
                     throw new Error('Something went wrong');
                 }
