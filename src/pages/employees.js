@@ -44,7 +44,7 @@ function Employees() {
       role: "Senior Dev",
       img: "https://img.freepik.com/free-photo/portrait-man-laughing_23-2148859448.jpg?w=740&t=st=1697810516~exp=1697811116~hmac=06fbbbc5d8278d150f6e28cfe61a35890a32dcd0e35dd3090baf55ea0317fa43"
     }
-  ]); // [state, setState]
+  ]); 
 
   function updateEmployee(id, newName, newRole) {
     const updatedEmployees = employees.map((employee) => {
@@ -69,7 +69,7 @@ function Employees() {
   
   const showEmployee = true;
   return (
-    <div className="">
+    <div>
       {showEmployee ? (
         <>
           <div className='flex flex-wrap justify-center'>

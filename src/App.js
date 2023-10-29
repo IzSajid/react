@@ -11,6 +11,7 @@ import Dictionary from './pages/Dictionary';
 import Defination from './pages/Defination';
 import NotFound from './components/NotFound';
 import Login from './pages/login';
+import Register from './pages/register';
 import { baseUrl } from './share';
 
 
@@ -20,6 +21,8 @@ function App() {
   useEffect(
     () => {
       function refreshToken() {
+        const access = localStorage.access || 'default value';
+        const refresh = localStorage.refresh || 'default value';
         if (localStorage.refresh) {
           const url = baseUrl + 'api/token/refresh/';
           fetch(url, {
@@ -28,7 +31,7 @@ function App() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              refresh: localStorage.refresh,
+              refresh: refresh,
             }),
           })
             .then(
@@ -38,19 +41,18 @@ function App() {
             )
             .then(
               (data) => {
-                localStorage.setItem('access', data.access);
-                localStorage.setItem('refresh', data.refresh);
+                localStorage.access = data.access || access;
+                localStorage.refresh = data.refresh || refresh;
                 setLoggedIn(true);
               }
             );
         }
       }
       const minitue = 60 * 1000;
-      refreshToken();
       setInterval(refreshToken, 3 * minitue);
     }, []);
 
-  const [loggedIn, setLoggedIn] = useState(localStorage.acess ? true : false);
+  const [loggedIn, setLoggedIn] = useState(localStorage.access ? true : false);
 
   function changeLoggedIn(value) {
     setLoggedIn(value);
@@ -65,6 +67,7 @@ function App() {
         <Header>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path='/dashboard' element={<Dashboard />} />
             <Route path="/employees" element={<Employees />} />
             <Route path='/customers' element={<Customers />} />
